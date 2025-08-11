@@ -7,12 +7,8 @@ const multer = require('multer');
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// 解決 CORS 問題，明確允許來自本機瀏覽器的 'null' 來源
-app.use(cors({
-    origin: ['https://podcast-api-kappa.vercel.app', 'null'],
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// 解決 CORS 問題，明確允許所有來源
+app.use(cors());
 
 app.use(express.json());
 
