@@ -7,8 +7,12 @@ const multer = require('multer');
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// 解決 CORS 問題，明確允許所有來源
-app.use(cors());
+// 解決 CORS 問題，明確允許所有來源，並特別處理 'null' 來源
+app.use(cors({
+    origin: ['https://podcast-api-kappa.vercel.app', 'null'],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(express.json());
 
@@ -57,7 +61,7 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
     const audioBytes = req.file.buffer.toString('base64');
     const audio = { content: audioBytes };
     
-    // 設定音檔格式，此處以 m4a 為例進行轉碼
+    // 設定音檔格式
     const config = {
       encoding: 'LINEAR16',
       sampleRateHertz: 44100,
