@@ -3,14 +3,16 @@ const cors = require('cors');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { SpeechClient } = require('@google-cloud/speech');
 const multer = require('multer');
-const fs = require('fs');
-const path = require('path');
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
-// 修正 CORS 問題：允許所有來源，這在開發階段是可接受的
-app.use(cors());
+// 解決 CORS 問題，明確允許來自本機瀏覽器的 'null' 來源
+app.use(cors({
+    origin: ['https://podcast-api-kappa.vercel.app', 'null'],
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.use(express.json());
 
@@ -61,7 +63,7 @@ app.post('/api/transcribe', upload.single('audio'), async (req, res) => {
     
     // 設定音檔格式，此處以 m4a 為例進行轉碼
     const config = {
-      encoding: 'LINEAR16', // 轉為 LINEAR16 格式
+      encoding: 'LINEAR16',
       sampleRateHertz: 44100,
       languageCode: 'zh-TW',
     };
